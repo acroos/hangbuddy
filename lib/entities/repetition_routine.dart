@@ -21,6 +21,19 @@ class RepetitionRoutine {
     return "${minutes}m${seconds}s";
   }
 
+  Map<String, Object> toJson() {
+    return {
+      'name': name,
+      'hangTime': hangTime,
+      'restTime': restTime,
+      'repetitions': repetitions
+    };
+  }
+
+  Map<String, dynamic> toJSONEncodable() {
+    return toJson();
+  }
+
   factory RepetitionRoutine.fromJson(Map<String, dynamic> json) {
     return RepetitionRoutine(
         name: json['name'],

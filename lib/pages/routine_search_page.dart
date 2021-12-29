@@ -87,7 +87,7 @@ class _RoutineSearchPageState extends State<RoutineSearchPage> {
   }
 
   Future<List<RepetitionRoutine>> _fetchRoutines({String? searchTerm}) async {
-    var url = 'http://${_myIPAddress}:3000/routines';
+    var url = 'http://$_myIPAddress:3000/routines';
     if (searchTerm != null && searchTerm != '') {
       url += "?name_like=" + searchTerm;
     }
@@ -95,7 +95,8 @@ class _RoutineSearchPageState extends State<RoutineSearchPage> {
     var response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      return RepetitionRoutine.fromJsonList(jsonDecode(response.body));
+      return List<RepetitionRoutine>.from((jsonDecode(response.body) as List)
+          .map((routine) => RepetitionRoutine.fromJson(routine)));
     } else {
       throw Exception('Failed to load');
     }
