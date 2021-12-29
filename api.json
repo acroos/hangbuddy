@@ -1,0 +1,7 @@
+{
+  "routines": [
+    { "id": 1, "name": "Best Routine on the Web", "hangTime": 11, "restTime": 19, "repetitions": 3 },
+    { "id": 2, "name": "30-and-30", "hangTime": 30, "restTime": 30, "repetitions": 2 },
+    { "id": 3, "name": "5-5x10", "hangTime": 5, "restTime": 5, "repetitions": 10 }
+  ]
+}
