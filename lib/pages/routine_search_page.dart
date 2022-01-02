@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hangbuddy/entities/repetition_routine.dart';
+import 'package:hangbuddy/entities/routine_list.dart';
 import 'package:http/http.dart' as http;
+import 'package:localstorage/localstorage.dart';
 
 class RoutineSearchPage extends StatefulWidget {
   const RoutineSearchPage({Key? key}) : super(key: key);
@@ -13,7 +15,9 @@ class RoutineSearchPage extends StatefulWidget {
 
 class _RoutineSearchPageState extends State<RoutineSearchPage> {
   var _isSearchBarOpen = false;
+
   final _myIPAddress = '192.168.86.228'; // TODO: replace this with your IP
+  final LocalStorage _storage = LocalStorage('hangbuddy.json');
 
   late Future<List<RepetitionRoutine>> _routines;
 
@@ -49,13 +53,24 @@ class _RoutineSearchPageState extends State<RoutineSearchPage> {
     return ListView.builder(
         itemCount: routines.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(routines[index].name),
-            subtitle: Text(routines[index].prettyTotalTime()),
-            trailing: IconButton(
-              icon: const Icon(Icons.favorite),
-              onPressed: () {},
-            ),
+          return FutureBuilder<bool>(
+            future: _storage.ready,
+            builder: (context, snapshot) {
+              var routine = routines[index];
+
+              return ListTile(
+                title: Text(routine.name),
+                subtitle: Text(routine.prettyTotalTime()),
+                trailing: IconButton(
+                  icon: const Icon(Icons.favorite),
+                  onPressed: () {
+                    if (snapshot.hasData && snapshot.data!) {
+                      _saveRoutine(routine);
+                    }
+                  },
+                ),
+              );
+            },
           );
         });
   }
@@ -104,5 +119,18 @@ class _RoutineSearchPageState extends State<RoutineSearchPage> {
     } else {
       throw Exception('Failed to load');
     }
+  }
+
+  void _saveRoutine(RepetitionRoutine routine) {
+    var myRoutineList = RoutineList();
+    var data = _storage.getItem('myRoutines');
+    if (data != null) {
+      myRoutineList.routines = List<RepetitionRoutine>.from(
+          (data as List).map((routine) => RepetitionRoutine.fromJson(routine)));
+    }
+
+    myRoutineList.routines.add(routine);
+
+    _storage.setItem('myRoutines', myRoutineList.toJSONEncodable());
   }
 }
