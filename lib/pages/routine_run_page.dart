@@ -180,8 +180,4 @@ class _RoutineRunPageState extends State<RoutineRunPage>
   bool _isLastStep() {
     return _currentStep == ((widget.routine.repetitions * 2) - 1);
   }
-
-  bool _isFinished() {
-    return _currentStep >= (widget.routine.repetitions * 2);
-  }
 }
