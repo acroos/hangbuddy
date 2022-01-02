@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hangbuddy/components/dismissible_list_item.dart';
 import 'package:hangbuddy/entities/repetition_routine.dart';
 import 'package:hangbuddy/entities/routine_list.dart';
 import 'package:hangbuddy/pages/new_routine_sheet.dart';
@@ -55,52 +56,42 @@ class _RoutineListPageState extends State<RoutineListPage> {
               itemBuilder: (BuildContext context, int index) {
                 var routine = _routineList.routines[index];
 
-                return Dismissible(
-                    direction: DismissDirection.endToStart,
-                    background: Container(
-                        alignment: const Alignment(1.0, 0.0),
-                        padding: const EdgeInsets.all(16.0),
-                        color: Colors.red,
-                        child: const Text(
-                          'Swipe to delete',
-                          textAlign: TextAlign.end,
-                          style: TextStyle(color: Colors.white, fontSize: 20.0),
-                        )),
-                    key: ValueKey<RepetitionRoutine>(routine),
-                    onDismissed: (DismissDirection direction) async {
-                      try {
-                        _deleteRoutine(routine);
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Failed to delete: $e"),
-                        ));
-                      }
-                    },
-                    child: ListTile(
-                      title: Text(routine.name),
-                      subtitle:
-                          Text("Total time: " + routine.prettyTotalTime()),
-                      onTap: () {
-                        _pushRoutinePage(routine);
-                      },
-                    ));
+                return DismissibleListItem(
+                    item: routine,
+                    title: routine.name,
+                    subtitle: "Total time: " + routine.prettyTotalTime(),
+                    onDismissed: () => _deleteRoutine(routine),
+                    onTapped: () => _pushRoutinePage(routine));
               });
         });
   }
 
   void _addRoutine(RepetitionRoutine routine) {
-    setState(() {
-      _routineList.routines.add(routine);
-      _saveRoutines();
-    });
+    try {
+      setState(() {
+        _routineList.routines.add(routine);
+        _saveRoutines();
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Failed to save: $e"),
+      ));
+    }
   }
 
   void _deleteRoutine(RepetitionRoutine routine) {
-    setState(() {
-      _routineList.routines.remove(routine);
-      _saveRoutines();
-    });
+    try {
+      setState(() {
+        _routineList.routines.remove(routine);
+        _saveRoutines();
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Failed to delete: $e"),
+      ));
+    }
   }
 
   void _saveRoutines() {
@@ -111,18 +102,7 @@ class _RoutineListPageState extends State<RoutineListPage> {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return NewRoutineSheet(
-            onSave: (routine) async {
-              try {
-                _addRoutine(routine);
-              } catch (e) {
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Failed to save: $e"),
-                ));
-              }
-            },
-          );
+          return NewRoutineSheet(onSave: _addRoutine);
         });
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hangbuddy/components/number_selector.dart';
 import 'package:hangbuddy/entities/repetition_routine.dart';
-import 'package:numberpicker/numberpicker.dart';
 
 class NewRoutineSheet extends StatefulWidget {
   const NewRoutineSheet({Key? key, required this.onSave}) : super(key: key);
@@ -19,20 +19,16 @@ class _NewRoutineSheetState extends State<NewRoutineSheet> {
 
   @override
   Widget build(BuildContext context) {
-    const _spacer = SizedBox(height: 16.0);
-    final _textStyle = Theme.of(context).textTheme.headline6;
-
     return Container(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text('New Routine', style: Theme.of(context).textTheme.headline5),
-            _spacer,
             TextField(
               autofocus: true,
               decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Name',
+                  labelText: 'Routine Name',
                   hintText: 'My New Routine'),
               onChanged: (value) {
                 setState(() {
@@ -40,55 +36,30 @@ class _NewRoutineSheetState extends State<NewRoutineSheet> {
                 });
               },
             ),
-            _spacer,
-            Column(
-              children: [
-                Text('Hang Time', style: _textStyle),
-                NumberPicker(
-                    axis: Axis.horizontal,
-                    minValue: 0,
-                    maxValue: 1000,
-                    value: _hangTime,
-                    onChanged: (value) {
-                      setState(() {
-                        _hangTime = value;
-                      });
-                    }),
-              ],
-            ),
-            _spacer,
-            Column(
-              children: [
-                Text('Rest Time', style: _textStyle),
-                NumberPicker(
-                    axis: Axis.horizontal,
-                    minValue: 0,
-                    maxValue: 1000,
-                    value: _restTime,
-                    onChanged: (value) {
-                      setState(() {
-                        _restTime = value;
-                      });
-                    }),
-              ],
-            ),
-            _spacer,
-            Column(
-              children: [
-                Text('Repetitions', style: _textStyle),
-                NumberPicker(
-                    axis: Axis.horizontal,
-                    minValue: 0,
-                    maxValue: 1000,
-                    value: _repetitions,
-                    onChanged: (value) {
-                      setState(() {
-                        _repetitions = value;
-                      });
-                    }),
-              ],
-            ),
-            _spacer,
+            NumberSelector(
+                title: 'Hang Time',
+                value: _hangTime,
+                onChanged: (value) {
+                  setState(() {
+                    _hangTime = value;
+                  });
+                }),
+            NumberSelector(
+                title: 'Rest Time',
+                value: _restTime,
+                onChanged: (value) {
+                  setState(() {
+                    _restTime = value;
+                  });
+                }),
+            NumberSelector(
+                title: 'Repetitions',
+                value: _repetitions,
+                onChanged: (value) {
+                  setState(() {
+                    _repetitions = value;
+                  });
+                }),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

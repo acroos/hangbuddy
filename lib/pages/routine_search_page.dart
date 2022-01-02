@@ -52,6 +52,10 @@ class _RoutineSearchPageState extends State<RoutineSearchPage> {
           return ListTile(
             title: Text(routines[index].name),
             subtitle: Text(routines[index].prettyTotalTime()),
+            trailing: IconButton(
+              icon: const Icon(Icons.favorite),
+              onPressed: () {},
+            ),
           );
         });
   }
